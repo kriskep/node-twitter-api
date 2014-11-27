@@ -132,7 +132,7 @@ twitter.upload(uploadparam, token, secret, function(err, data, response) {
 			media_id: data.media_id_string
 		};
 	}
-	twitter.direct_messages( "new", token, secret, callback);
+	twitter.direct_messages( "new", params, token, secret, callback);
 }
 ```
 Only 1 file can be uploaded at a time.
