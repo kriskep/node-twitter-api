@@ -114,3 +114,29 @@ To send media alongside a tweet you just call the method as specified before. Pl
 ```
 Instead of specifing "media[]", you use a real array. The given paths will then be read and posted to the Twitter API. You can also use a Readable Stream (http://nodejs.org/api/fs.html#fs_fs_createreadstream_path_options) instead of a Path.
 Please note that Twitter only allows one image at the moment (the last one specified will be used).
+
+## Use of upload API ##
+Example of uploading a media file followed by sending direct message:
+```javascript
+var uploadparam = {
+	media: filename
+};
+		
+twitter.upload(uploadparam, token, secret, function(err, data, response) {
+	if (err) {
+		console.log(err);
+	} else {
+		var params = {
+			screen_name: twitterid,
+			text: "You message here",
+			media_id: data.media_id_string
+		};
+	}
+	twitter.direct_messages( "new", token, secret, callback);
+}
+```
+Only 1 file can be uploaded at a time.
+
+The response will contain `media_id` and `media_id_string`, which can be used in subsequent twitter API calls.
+
+	

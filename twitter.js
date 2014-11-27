@@ -285,6 +285,43 @@ Twitter.prototype.updateWithMedia = function(params, accessToken, accessTokenSec
 	}
 }
 
+Twitter.prototype.upload = function(params, accessToken, accessTokenSecret, callback) {
+	var r = request.post({
+		url: "https://upload.twitter.com/1.1/media/upload.json",
+		oauth: {
+			consumer_key: this.consumerKey,
+			consumer_secret: this.consumerSecret,
+			token: accessToken,
+			token_secret: accessTokenSecret
+		}
+	}, function(error, response, body) {
+		if (error) {
+			callback(error, body, response, "https://upload.twitter.com/1.1/media/upload.json?" + querystring.stringify(params));
+		} else {
+			try {
+				callback(null, JSON.parse(body), response);
+			} catch (e) {
+				callback(e, body, response);
+			}
+		}
+	});
+
+	// multipart/form-data
+	var form = r.form();
+	for (var key in params) {
+		if (key != "media") {
+			form.append(key, params[key]);
+		}
+	}
+
+	// append the media (only 1 media file per upload)
+	var media = params["media"];
+	if (fs.existsSync(media)) {
+			form.append("media", fs.createReadStream(media));
+	} else {
+		form.append("media", media);
+	}
+}
 
 // Search
 Twitter.prototype.search = function(params, accessToken, accessTokenSecret, callback) {
